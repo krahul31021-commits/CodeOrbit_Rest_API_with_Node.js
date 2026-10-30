@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes REST API | Live Interactive Tester & Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 29, 47, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(99, 102, 241, 0.4);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #171d34 0%, #0b0f19 90%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 3rem;
+    }
+
+    header {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--card-hover-border);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #4f46e5);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-edit {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-edit:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 0.35rem;
+    }
+
+    .notes-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .notes-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    .note-item {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .note-item:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .note-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .note-category {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .note-content {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      margin-bottom: 0.75rem;
+      white-space: pre-wrap;
+    }
+
+    .note-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.725rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 0.5rem;
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Terminal Inspector */
+    .terminal-card {
+      grid-column: 1 / -1;
+      background: #070a13;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: #0f172a;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-body {
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+      color: #e2e8f0;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Quick reference tabs */
+    .endpoints-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .endpoint-pill {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .endpoint-pill:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .badge-method {
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .method-get { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .method-post { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .method-put { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .method-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 1.75rem;
+      width: 90%;
+      max-width: 520px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">📝</div>
+      <div>
+        <h1>Notes REST API</h1>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Node.js &bull; Express &bull; JSON Storage</p>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span id="server-status">API Online</span>
+      </div>
+      <a href="/postman_collection.json" download class="btn btn-secondary" style="font-size: 0.8rem; text-decoration: none;">
+        📥 Download Postman Collection
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- Column 1: Add / Edit Note Form -->
+    <section class="card">
+      <div class="card-title">
+        <span>➕ Add New Note</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">POST /api/notes</span>
+      </div>
+      <form id="note-form">
+        <div class="form-group">
+          <label for="note-title">Title *</label>
+          <input type="text" id="note-title" placeholder="e.g., Learn Express Routing" required />
+        </div>
+        <div class="form-group">
+          <label for="note-category">Category</label>
+          <input type="text" id="note-category" placeholder="e.g., Work, Study, Personal" value="General" />
+        </div>
+        <div class="form-group">
+          <label for="note-content">Content *</label>
+          <textarea id="note-content" placeholder="Write your note body here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Create Note (POST)
+        </button>
+      </form>
+    </section>
+
+    <!-- Column 2: Live Records List -->
+    <section class="card">
+      <div class="card-title">
+        <span>📋 Records in Storage (<span id="notes-count">0</span>)</span>
+        <button class="btn btn-secondary" id="btn-refresh" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
+          🔄 Refresh
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="🔍 Search by title or content..." />
+        <select id="category-filter" style="width: 140px;">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+
+      <!-- Notes Feed -->
+      <div class="notes-list" id="notes-container">
+        <div style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading notes...</div>
+      </div>
+    </section>
+
+    <!-- Terminal: Live HTTP Request / Response Inspector -->
+    <section class="terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <span class="terminal-dot dot-red"></span>
+          <span class="terminal-dot dot-yellow"></span>
+          <span class="terminal-dot dot-green"></span>
+        </div>
+        <div class="terminal-title">LIVE HTTP CONSOLE &bull; REQUEST & RESPONSE INSPECTOR</div>
+        <button class="btn btn-secondary" id="btn-clear-console" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">
+          Clear
+        </button>
+      </div>
+      <div class="terminal-body" id="terminal-output">Ready. Click any action or test an endpoint to view real-time HTTP requests and responses.</div>
+    </section>
+
+    <!-- Reference Section: All Endpoints -->
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <span>⚡ Quick Test Endpoints</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Click any endpoint below to execute it immediately</span>
+      </div>
+      <div class="endpoints-grid">
+        <div class="endpoint-pill" onclick="executeQuickEndpoint('GET', '/health')">
+          <span class="badge-method method-get">GET</span>
+          <span>/health</span>
+        </div>
+        <div class="endpoint-pill" onclick="executeQuickEndpoint('GET', '/api')">
+          <span class="badge-method method-get">GET</span>
+          <span>/api</span>
+        </div>
+        <div class="endpoint-pill" onclick="executeQuickEndpoint('GET', '/api/notes')">
+          <span class="badge-method method-get">GET</span>
+          <span>/api/notes</span>
+        </div>
+        <div class="endpoint-pill" onclick="executeQuickEndpoint('GET', '/api/notes?category=Learning')">
+          <span class="badge-method method-get">GET</span>
+          <span>/api/notes?category=Learning</span>
+        </div>
+        <div class="endpoint-pill" onclick="executeQuickEndpoint('POST', '/api/notes', { category: 'Invalid' })">
+          <span class="badge-method method-post">POST</span>
+          <span>/api/notes (400 validation test)</span>
+        </div>
+        <div class="endpoint-pill" onclick="executeQuickEndpoint('GET', '/api/notes/nonexistent-id')">
+          <span class="badge-method method-get">GET</span>
+          <span>/api/notes/:id (404 test)</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit Note Modal -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <div class="card-title">
+        <span>✏️ Edit Note (PUT /api/notes/:id)</span>
+        <button class="btn btn-secondary" id="btn-close-modal" style="padding: 0.2rem 0.5rem;">✕</button>
+      </div>
+      <form id="edit-form">
+        <input type="hidden" id="edit-id" />
+        <div class="form-group">
+          <label for="edit-title">Title *</label>
+          <input type="text" id="edit-title" required />
+        </div>
+        <div class="form-group">
+          <label for="edit-category">Category</label>
+          <input type="text" id="edit-category" />
+        </div>
+        <div class="form-group">
+          <label for="edit-content">Content *</label>
+          <textarea id="edit-content" required></textarea>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-edit">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes (PUT)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const terminal = document.getElementById('terminal-output');
+    const notesContainer = document.getElementById('notes-container');
+    const notesCount = document.getElementById('notes-count');
+    const searchInput = document.getElementById('search-input');
+    const categoryFilter = document.getElementById('category-filter');
+    const noteForm = document.getElementById('note-form');
+    const editModal = document.getElementById('edit-modal');
+    const editForm = document.getElementById('edit-form');
+
+    let allNotes = [];
+
+    function logTerminal(title, details) {
+      const time = new Date().toLocaleTimeString();
+      terminal.innerHTML = `[${time}] >>> ${title}\n` + details + '\n\n' + terminal.innerHTML;
+    }
+
+    document.getElementById('btn-clear-console').addEventListener('click', () => {
+      terminal.innerHTML = 'Console cleared. Ready.';
+    });
+
+    // Fetch and display notes
+    async function loadNotes() {
+      const searchTerm = searchInput.value.trim();
+      const categoryTerm = categoryFilter.value;
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('search', searchTerm);
+      if (categoryTerm) params.append('category', categoryTerm);
+
+      const url = `/api/notes${params.toString() ? '?' + params.toString() : ''}`;
+
+      try {
+        const startTime = performance.now();
+        const res = await fetch(url);
+        const data = await res.json();
+        const elapsed = (performance.now() - startTime).toFixed(1);
+
+        logTerminal(`HTTP GET ${url} -> Status ${res.status} (${elapsed}ms)`, JSON.stringify(data, null, 2));
+
+        if (data.success) {
+          allNotes = data.data;
+          renderNotes(allNotes);
+          updateCategoryDropdown(allNotes);
+        }
+      } catch (err) {
+        logTerminal(`ERROR fetching ${url}`, err.message);
+        notesContainer.innerHTML = `<div style="color: var(--danger); text-align: center;">Failed to connect to API</div>`;
+      }
+    }
+
+    function renderNotes(notes) {
+      notesCount.textContent = notes.length;
+      if (notes.length === 0) {
+        notesContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No notes found matching criteria.</div>`;
+        return;
+      }
+
+      notesContainer.innerHTML = notes.map(note => `
+        <div class="note-item" data-id="${note.id}">
+          <div class="note-header">
+            <span class="note-title">${escapeHtml(note.title)}</span>
+            <span class="note-category">${escapeHtml(note.category || 'General')}</span>
+          </div>
+          <div class="note-content">${escapeHtml(note.content)}</div>
+          <div class="note-footer">
+            <span>ID: ${note.id} &bull; ${new Date(note.createdAt).toLocaleDateString()}</span>
+            <div class="note-actions">
+              <button class="btn btn-edit" onclick="openEditModal('${note.id}')">Edit (PUT)</button>
+              <button class="btn btn-danger" onclick="deleteNote('${note.id}')">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateCategoryDropdown(notes) {
+      const currentVal = categoryFilter.value;
+      const categories = Array.from(new Set(notes.map(n => n.category).filter(Boolean)));
+      
+      categoryFilter.innerHTML = '<option value="">All Categories</option>' + 
+        categories.map(c => `<option value="${escapeHtml(c)}" ${c === currentVal ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    // Create note
+    noteForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('note-title').value,
+        category: document.getElementById('note-category').value,
+        content: document.getElementById('note-content').value
+      };
+
+      try {
+        const startTime = performance.now();
+        const res = await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const elapsed = (performance.now() - startTime).toFixed(1);
+
+        logTerminal(`HTTP POST /api/notes -> Status ${res.status} (${elapsed}ms)`, JSON.stringify(data, null, 2));
+
+        if (res.ok) {
+          noteForm.reset();
+          document.getElementById('note-category').value = 'General';
+          loadNotes();
+        } else {
+          alert(data.error || 'Failed to create note');
+        }
+      } catch (err) {
+        logTerminal('POST /api/notes Error', err.message);
+      }
+    });
+
+    // Delete note
+    window.deleteNote = async (id) => {
+      if (!confirm(`Are you sure you want to delete note ${id}?`)) return;
+
+      try {
+        const startTime = performance.now();
+        const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        const elapsed = (performance.now() - startTime).toFixed(1);
+
+        logTerminal(`HTTP DELETE /api/notes/${id} -> Status ${res.status} (${elapsed}ms)`, JSON.stringify(data, null, 2));
+        loadNotes();
+      } catch (err) {
+        logTerminal(`DELETE /api/notes/${id} Error`, err.message);
+      }
+    };
+
+    // Edit modal
+    window.openEditModal = (id) => {
+      const note = allNotes.find(n => String(n.id) === String(id));
+      if (!note) return;
+
+      document.getElementById('edit-id').value = note.id;
+      document.getElementById('edit-title').value = note.title;
+      document.getElementById('edit-category').value = note.category || '';
+      document.getElementById('edit-content').value = note.content;
+      editModal.classList.add('active');
+    };
+
+    function closeEditModal() {
+      editModal.classList.remove('active');
+    }
+
+    document.getElementById('btn-close-modal').addEventListener('click', closeEditModal);
+    document.getElementById('btn-cancel-edit').addEventListener('click', closeEditModal);
+
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-id').value;
+      const payload = {
+        title: document.getElementById('edit-title').value,
+        category: document.getElementById('edit-category').value,
+        content: document.getElementById('edit-content').value
+      };
+
+      try {
+        const startTime = performance.now();
+        const res = await fetch(`/api/notes/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const elapsed = (performance.now() - startTime).toFixed(1);
+
+        logTerminal(`HTTP PUT /api/notes/${id} -> Status ${res.status} (${elapsed}ms)`, JSON.stringify(data, null, 2));
+
+        if (res.ok) {
+          closeEditModal();
+          loadNotes();
+        } else {
+          alert(data.error || 'Failed to update note');
+        }
+      } catch (err) {
+        logTerminal(`PUT /api/notes/${id} Error`, err.message);
+      }
+    });
+
+    // Quick Execute Pill
+    window.executeQuickEndpoint = async (method, url, body = null) => {
+      try {
+        const startTime = performance.now();
+        const options = { method, headers: {} };
+        if (body) {
+          options.headers['Content-Type'] = 'application/json';
+          options.body = JSON.stringify(body);
+        }
+        const res = await fetch(url, options);
+        const data = await res.json();
+        const elapsed = (performance.now() - startTime).toFixed(1);
+
+        logTerminal(`HTTP ${method} ${url} -> Status ${res.status} (${elapsed}ms)`, JSON.stringify(data, null, 2));
+      } catch (err) {
+        logTerminal(`Quick Test ${method} ${url} Error`, err.message);
+      }
+    };
+
+    // Event listeners for search & filter
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadNotes, 250);
+    });
+
+    categoryFilter.addEventListener('change', loadNotes);
+    document.getElementById('btn-refresh').addEventListener('click', loadNotes);
+
+    // Initial load
+    loadNotes();
+  </script>
+</body>
+</html>

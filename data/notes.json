@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "Welcome to the Notes REST API",
+    "content": "This is a basic REST API built with Node.js and Express. It supports full CRUD operations.",
+    "category": "General",
+    "createdAt": "2026-10-30T10:00:00.000Z",
+    "updatedAt": "2026-10-30T10:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Learn Express Middleware",
+    "content": "Explore how express.json(), CORS, and request logging middleware work together in a pipeline.",
+    "category": "Learning",
+    "createdAt": "2026-10-30T11:30:00.000Z",
+    "updatedAt": "2026-10-30T11:30:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Test with Postman",
+    "content": "Import postman_collection.json or send requests via cURL to test GET, POST, PUT, and DELETE endpoints.",
+    "category": "Testing",
+    "createdAt": "2026-10-30T12:15:00.000Z",
+    "updatedAt": "2026-10-30T12:15:00.000Z"
+  }
+]

@@ -1,0 +1,206 @@
+{
+  "info": {
+    "_postman_id": "b3e0c7e2-4752-4f05-9fa5-fbc4cb0b2304",
+    "name": "Notes REST API",
+    "description": "Complete Postman collection to test the Node.js Express Notes REST API.\nImport this file directly into Postman to test GET, POST, PUT, DELETE, filtering, and validation error responses.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "sampleNoteId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Server Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Checks server uptime and health status"
+          }
+        },
+        {
+          "name": "API Metadata & Route List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api",
+              "host": ["{{baseUrl}}"],
+              "path": ["api"]
+            },
+            "description": "Returns list of all supported endpoints"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notes Endpoints",
+      "item": [
+        {
+          "name": "1. Get All Notes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"]
+            },
+            "description": "Retrieves the full list of notes stored in the system"
+          }
+        },
+        {
+          "name": "2. Search / Filter Notes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes?search=Express&category=Learning",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Express",
+                  "description": "Search keyword matching title or content"
+                },
+                {
+                  "key": "category",
+                  "value": "Learning",
+                  "description": "Filter by note category"
+                }
+              ]
+            },
+            "description": "Filter notes by keyword search or category"
+          }
+        },
+        {
+          "name": "3. Get Note by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes/{{sampleNoteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes", "{{sampleNoteId}}"]
+            },
+            "description": "Retrieves a single note by its ID"
+          }
+        },
+        {
+          "name": "4. Create Note (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postman Testing Note\",\n  \"content\": \"This note was created using Postman to verify the POST /api/notes endpoint.\",\n  \"category\": \"Testing\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"]
+            },
+            "description": "Creates a new note record. Returns 201 Created on success."
+          }
+        },
+        {
+          "name": "5. Update Note (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Note Title\",\n  \"content\": \"Updated note content successfully verified via Postman.\",\n  \"category\": \"Productivity\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notes/{{sampleNoteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes", "{{sampleNoteId}}"]
+            },
+            "description": "Updates an existing note record by ID. Returns 200 OK on success."
+          }
+        },
+        {
+          "name": "6. Delete Note (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes/{{sampleNoteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes", "{{sampleNoteId}}"]
+            },
+            "description": "Deletes a note record by ID. Returns 200 OK with the deleted record details."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "Validation Error (Missing title/content)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Incomplete\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"]
+            },
+            "description": "Tests 400 Bad Request response when required fields are missing"
+          }
+        },
+        {
+          "name": "Not Found Error (ID does not exist)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes/99999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes", "99999999"]
+            },
+            "description": "Tests 404 Not Found response when requested ID does not exist"
+          }
+        }
+      ]
+    }
+  ]
+}
